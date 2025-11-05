@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  products      Product[]
+  liveConfigs   LiveConfig[]
+  liveEvents    LiveEvent[]
+  settings      UserSettings?
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  price         Float
+  isActive      Boolean  @default(true)
+  autoReply     String?  // Message prix personnalisé
+  promoPercent  Int?     // -30%
+  promoMessage  String?  // "Promo jusqu'à dimanche!"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model LiveConfig {
+  id                String   @id @default(cuid())
+  userId            String
+  name              String   @default("Ma config live")
+  featuredProducts  String @default("") // IDs produits à pousser
+  discount          Int      @default(0) // %
+  limitedPlaces     Int?     // Nombre de places limitées
+  overlayMessage    String   @default("🔥 Offre spéciale LIVE !") // Message overlay
+  timerEnabled      Boolean  @default(true)
+  timerDuration     Int      @default(30) // minutes
+  socialProof       Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model LiveEvent {
+  id            String    @id @default(cuid())
+  userId        String
+  configId      String?   // Config utilisée
+  platform      String    // "tiktok" | "instagram" | "facebook"
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+  leadsCaptured Int       @default(0)
+  revenue       Float     @default(0)
+  isActive      Boolean   @default(true)
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leads         Lead[]
+  
+  @@index([userId])
+  @@index([isActive])
+}
+
+model Lead {
+  id          String    @id @default(cuid())
+  liveEventId String
+  username    String
+  message     String?
+  score       Int       // Score backend (caché à Sarah)
+  converted   Boolean   @default(false)
+  revenue     Float?
+  createdAt   DateTime  @default(now())
+  
+  liveEvent   LiveEvent @relation(fields: [liveEventId], references: [id], onDelete: Cascade)
+  
+  @@index([liveEventId])
+  @@index([score])
+}
+
+model UserSettings {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  tone            String   @default("friendly") // "pro" | "friendly" | "enthusiastic"
+  useEmojis       Boolean  @default(true)
+  signature       String?  // "- Sarah 💕"
+  autoReplyPrice  Boolean  @default(true)
+  deliveryMessage String?  // Message livraison perso
+  notifyHotLead   Boolean  @default(true) // Notif SMS lead chaud
+  dailyReport     Boolean  @default(true) // Email rapport quotidien
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

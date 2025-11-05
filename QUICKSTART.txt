@@ -1,0 +1,83 @@
+═══════════════════════════════════════
+   🚀 LIVEBOOST - QUICK START
+═══════════════════════════════════════
+
+📦 INSTALLATION (Option la plus simple)
+═══════════════════════════════════════
+
+1. Extraire le ZIP:
+   - Clic droit sur liveboost.zip
+   - "Extraire tout..."
+   - Choisis un dossier (ex: C:\liveboost)
+
+2. Ouvrir PowerShell:
+   - Dans le dossier extrait
+   - Shift + Clic droit → "Ouvrir PowerShell ici"
+
+3. Lancer le script d'installation:
+   .\install.ps1
+
+4. Suivre les instructions !
+
+═══════════════════════════════════════
+📝 OU INSTALLATION MANUELLE
+═══════════════════════════════════════
+
+1. Extraire le ZIP
+
+2. Ouvrir PowerShell dans le dossier
+
+3. Installer:
+   npm install --legacy-peer-deps
+
+4. Configurer .env:
+   Copy-Item .env.example .env
+   notepad .env
+   → Ajoute DATABASE_URL (Supabase)
+   → Ajoute ANTHROPIC_API_KEY (Claude)
+
+5. Setup database:
+   npm run db:push
+
+6. Démarrer:
+   npm run dev
+
+7. Ouvrir:
+   http://localhost:3000
+
+═══════════════════════════════════════
+🔑 CREDENTIALS NÉCESSAIRES
+═══════════════════════════════════════
+
+1. DATABASE (gratuit):
+   → https://supabase.com
+   → Créer projet
+   → Copier Connection String
+
+2. CLAUDE API (15€/mois):
+   → https://console.anthropic.com
+   → Créer compte
+   → Générer clé API
+
+═══════════════════════════════════════
+❓ PROBLÈMES ?
+═══════════════════════════════════════
+
+"npm install" échoue:
+→ npm install --legacy-peer-deps --force
+
+Port 3000 occupé:
+→ $env:PORT=3001
+→ npm run dev
+
+Database error:
+→ Vérifie DATABASE_URL dans .env
+→ Re-run: npm run db:push
+
+═══════════════════════════════════════
+📞 AIDE
+═══════════════════════════════════════
+
+Lis README.md pour + de détails !
+
+═══════════════════════════════════════
